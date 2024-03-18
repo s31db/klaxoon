@@ -1,5 +1,5 @@
 from requests import Response
-
+from klaxoon.dimension import Dimension
 from klaxoon.klaxoon_api import KlaxoonAPI
 
 from typing import Dict, Any, List
@@ -7,29 +7,36 @@ from typing import Dict, Any, List
 
 class KlaxoonDimension(KlaxoonAPI):
 
-    def get_board_dimensions(self) -> List[str]:
+    def get_board_dimensions(self) -> Dimension:
         """https://developers.klaxoon.com/reference/v1boarddimensiongetcollection"""
-        return self._request("GET", "v1/boards/dimensions").json()
+        for dimension in self._request("GET", "v1/boards/dimensions").json()["items"]:
+            yield Dimension(**dimension)
 
-    def get_board_dimension(self, board_id: str, dimension_id: str) -> Dict[str, Any]:
+    def get_board_dimension(self, board_id: str, dimension_id: str) -> Dimension:
         """https://developers.klaxoon.com/reference/v1boarddimensionget"""
-        return self._request(
-            "GET", f"v1/boards/{board_id}/dimensions/{dimension_id}"
-        ).json()
+        return Dimension(
+            **self._request(
+                "GET", f"v1/boards/{board_id}/dimensions/{dimension_id}"
+            ).json()
+        )
 
-    def add_board_dimension(self, board_id: str, label: str) -> Dict[str, Any]:
+    def add_board_dimension(self, board_id: str, label: str) -> Dimension:
         """https://developers.klaxoon.com/reference/v1boarddimensionpost"""
         data = {"label": label}
-        return self._request("POS", f"v1/boards/{board_id}/dimension", data=data).json()
+        return Dimension(
+            **self._request("POS", f"v1/boards/{board_id}/dimension", data=data).json()
+        )
 
     def update_board_dimension(
         self, board_id: str, dimension_id: str, label: str
-    ) -> Dict[str, Any]:
+    ) -> Dimension:
         """https://developers.klaxoon.com/reference/v1boarddimensionpatch"""
         data = {"label": label}
-        return self._request(
-            "PATCH", f"v1/boards/{board_id}/dimensions/{dimension_id}", data=data
-        ).json()
+        return Dimension(
+            **self._request(
+                "PATCH", f"v1/boards/{board_id}/dimensions/{dimension_id}", data=data
+            ).json()
+        )
 
     def delete_board_dimension(self, board_id: str, dimension_id: str) -> Response:
         """https://developers.klaxoon.com/reference/v1boarddimensiondelete"""

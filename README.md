@@ -1,9 +1,12 @@
 # Klaxoon API Python Wrapper
+
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Ce projet est une bibliothèque Python pour interagir avec l'API Klaxoon. Il permet de voir, ajouter et supprimer des idées à partir de tableaux Klaxoon.
+Ce projet est une bibliothèque Python pour interagir avec l'API Klaxoon. Il permet de voir, ajouter et supprimer des
+idées à partir de tableaux Klaxoon.
 
-Pour la configuration d'un accès développeur https://app.klaxoon.com/userspace/my-apps et le site de référence https://developers.klaxoon.com/
+Pour la configuration d'un accès développeur https://app.klaxoon.com/userspace/my-apps et le site de
+référence https://developers.klaxoon.com/
 
 ## Installation
 
@@ -39,12 +42,12 @@ api = KlaxoonAPI.from_config_file(os.path.expanduser("~/.api_klaxoon/.token"))
 boards = api.get_boards()
 
 # Afficher les idées de chaque tableau
-for board in boards["items"]:
+for board in boards:
     try:
-        print(f"Tableau '{board['title']}':")
-        ideas = api.get_board_ideas(board["id"])
-        for idea in ideas["items"]:
-            print(f"- {idea['data']['content']}")
+        print(f"Tableau '{board.title}':")
+        ideas = api.get_board_ideas(board.id)
+        for idea in ideas:
+            print(f"- {idea.data.content}")
     except HTTPError as e:
         print(e)
 
@@ -52,14 +55,14 @@ for board in boards["items"]:
 boards = api.get_boards()
 print("Liste des tableaux Klaxoon:")
 for board in boards:
-    print(board["title"])
+    print(board.title)
 
 # Récupérer les idées d'un tableau spécifique
 board_id = "YOUR_BOARD_ID"
 ideas = api.get_board_ideas(board_id)
 print(f"Idées du tableau {board_id}:")
 for idea in ideas:
-    print(idea["title"])
+    print(idea.title)
 
 # Ajouter une idée à un tableau
 new_idea = "Nouvelle idée"

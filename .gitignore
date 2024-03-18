@@ -1,3 +1,4 @@
 /.idea/*
 /build/*
 /klaxoon.egg-info/*
+/klaxoon/__pycache__/*

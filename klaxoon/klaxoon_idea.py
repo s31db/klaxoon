@@ -1,4 +1,5 @@
 from klaxoon.klaxoon_api import KlaxoonAPI
+from klaxoon.idea import Idea
 
 from typing import Dict, Any, List
 from requests import Response
@@ -15,7 +16,7 @@ class KlaxoonIdea(KlaxoonAPI):
         authors: List[str] = None,
         categories: List[str] = None,
         colors: List[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> Idea:
         """https://developers.klaxoon.com/reference/v1boardideagetcollection"""
         endpoint = f"v1/boards/{board_id}/ideas"
         params = {}
@@ -33,12 +34,13 @@ class KlaxoonIdea(KlaxoonAPI):
             params["categoryId"] = ",".join(categories)
         if colors:
             params["colorId"] = ",".join(colors)
-        return self._request("GET", endpoint, params=params).json()
+        for idea in self._request("GET", endpoint, params=params).json()["items"]:
+            yield Idea(**idea)
 
-    def get_board_idea(self, board_id: str, idea_id: str) -> Dict[str, Any]:
+    def get_board_idea(self, board_id: str, idea_id: str) -> Idea:
         """https://developers.klaxoon.com/reference/v1boardideaget"""
         endpoint = f"v1/boards/{board_id}/ideas/{idea_id}"
-        return self._request("GET", endpoint).json()
+        return Idea(**self._request("GET", endpoint).json())
 
     def add_idea_to_board(
         self,
@@ -48,7 +50,7 @@ class KlaxoonIdea(KlaxoonAPI):
         category: str = None,
         color: str = None,
         dimension: str = None,
-    ) -> Dict[str, Any]:
+    ) -> Idea:
         """https://developers.klaxoon.com/reference/v1boardideapost
         Position is a dict with keys 'x' and 'y' and 'z'. 'x' and 'y' are float or int and 'z' is int.
         Position and all position values is optional.
@@ -63,7 +65,7 @@ class KlaxoonIdea(KlaxoonAPI):
             payload["data"]["color"] = color
         if dimension:
             payload["data"]["dimension"] = dimension
-        return self._request("POST", endpoint, data=payload).json()
+        return Idea(**self._request("POST", endpoint, data=payload).json())
 
     def delete_idea_from_board(self, board_id: str, idea_id: str) -> Response:
         """https://developers.klaxoon.com/reference/v1boardideadelete"""
@@ -79,7 +81,7 @@ class KlaxoonIdea(KlaxoonAPI):
         category: str = None,
         color: str = None,
         dimensions: List[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> Idea:
         """https://developers.klaxoon.com/reference/v1boardideapatch"""
         payload = {"data": {}}
         if position:
@@ -94,6 +96,8 @@ class KlaxoonIdea(KlaxoonAPI):
             payload["data"]["dimensions"] = [
                 {"id": dimension} for dimension in dimensions
             ]
-        return self._request(
-            "PATCH", f"v1/boards/{board_id}/ideas/{idea_id}", data=payload
-        ).json()
+        return Idea(
+            **self._request(
+                "PATCH", f"v1/boards/{board_id}/ideas/{idea_id}", data=payload
+            ).json()
+        )

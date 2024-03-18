@@ -1,23 +1,25 @@
 import os
 import requests
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 from requests import Response
 
 
 class KlaxoonAPI:
-    def __init__(self, api_token: str):
+    def __init__(self, api_token: str, base_url: str):
         self.api_token = api_token
-        self.base_url = "https://api.klaxoon.com"
+        self.base_url = base_url
 
     @classmethod
     def from_config_file(
-        cls, config_file: str = os.path.expanduser("~/.api_klaxoon/.token")
+        cls,
+        config_file: str = os.path.expanduser("~/.api_klaxoon/.token"),
+        base_url: str = "https://api.klaxoon.com",
     ) -> "KlaxoonAPI":
         try:
             with open(config_file, "r") as f:
                 api_token = f.read().strip()
-            return cls(api_token)
+            return cls(api_token, base_url)
         except FileNotFoundError:
             raise ValueError("Fichier de configuration du token introuvable")
 
