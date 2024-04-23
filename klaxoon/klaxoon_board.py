@@ -1,7 +1,8 @@
 from klaxoon.board import Board
 from klaxoon.klaxoon_api import KlaxoonAPI
 
-from typing import List
+from typing import List, Generator
+from collections.abc import Iterator
 
 
 class KlaxoonBoard(KlaxoonAPI):
@@ -11,7 +12,7 @@ class KlaxoonBoard(KlaxoonAPI):
         per_page: int = None,
         sort_by: List[str] = None,
         query: str = None,
-    ) -> Board:
+    ) -> Iterator[Board]:
         """https://developers.klaxoon.com/reference/v1boardgetcollection"""
         endpoint = "v1/boards"
         params = {}

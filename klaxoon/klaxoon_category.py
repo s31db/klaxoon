@@ -2,10 +2,12 @@ from requests import Response
 from klaxoon.category import Category
 from klaxoon.klaxoon_api import KlaxoonAPI
 
+from typing import Iterator
+
 
 class KlaxoonCategory(KlaxoonAPI):
 
-    def get_board_categories(self, board_id: str) -> Category:
+    def get_board_categories(self, board_id: str) -> Iterator[Category]:
         """https://developers.klaxoon.com/reference/v1boardcategorygetcollection"""
         for category in self._request("GET", f"v1/boards/{board_id}/categories").json()[
             "items"

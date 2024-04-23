@@ -2,14 +2,16 @@ from requests import Response
 from klaxoon.dimension import Dimension
 from klaxoon.klaxoon_api import KlaxoonAPI
 
-from typing import Dict, Any, List
+from typing import Iterator
 
 
 class KlaxoonDimension(KlaxoonAPI):
 
-    def get_board_dimensions(self) -> Dimension:
+    def get_board_dimensions(self, board_id: str) -> Iterator[Dimension]:
         """https://developers.klaxoon.com/reference/v1boarddimensiongetcollection"""
-        for dimension in self._request("GET", "v1/boards/dimensions").json()["items"]:
+        for dimension in self._request(
+            "GET", f"v1/boards/{board_id}/dimensions"
+        ).json()["items"]:
             yield Dimension(**dimension)
 
     def get_board_dimension(self, board_id: str, dimension_id: str) -> Dimension:
@@ -24,7 +26,9 @@ class KlaxoonDimension(KlaxoonAPI):
         """https://developers.klaxoon.com/reference/v1boarddimensionpost"""
         data = {"label": label}
         return Dimension(
-            **self._request("POS", f"v1/boards/{board_id}/dimension", data=data).json()
+            **self._request(
+                "POST", f"v1/boards/{board_id}/dimensions", data=data
+            ).json()
         )
 
     def update_board_dimension(

@@ -1,7 +1,7 @@
 from klaxoon.author import Author
-from klaxoon.category import Category
-from klaxoon.color import Color
-from klaxoon.dimension import Dimension
+from klaxoon.idea_category import Idea_Category
+from klaxoon.idea_color import Idea_Color
+from klaxoon.idea_dimension import IdeaDimension
 import logging
 from typing import Any
 
@@ -18,17 +18,17 @@ class Data_Idea:
         self,
         content: str | None,
         format: str | None,
-        color: Color | None,
-        category: dict | None,
-        dimensions: list | None,
+        color: Idea_Color | None,
+        category: Idea_Category | None,
+        dimensions: dict[str, IdeaDimension] | None,
         **kwargs: Any,
     ):
         self.content = content
         self.format = format
-        self.color = Color(**color) if color else color
-        self.category = Category(**category) if category else category
+        self.color = Idea_Color(**color) if color else color
+        self.category = Idea_Category(**category) if category else category
         self.dimensions = (
-            [Dimension(**dimension) for dimension in dimensions]
+            {dimension["id"]: IdeaDimension(**dimension) for dimension in dimensions}
             if dimensions
             else dimensions
         )

@@ -1,7 +1,7 @@
 from klaxoon.klaxoon_api import KlaxoonAPI
 from klaxoon.idea import Idea
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Iterator
 from requests import Response
 
 
@@ -16,7 +16,7 @@ class KlaxoonIdea(KlaxoonAPI):
         authors: List[str] = None,
         categories: List[str] = None,
         colors: List[str] = None,
-    ) -> Idea:
+    ) -> Iterator[Idea]:
         """https://developers.klaxoon.com/reference/v1boardideagetcollection"""
         endpoint = f"v1/boards/{board_id}/ideas"
         params = {}
@@ -47,9 +47,9 @@ class KlaxoonIdea(KlaxoonAPI):
         board_id: str,
         content: str,
         position: Dict[str, float | int] = None,
-        category: str = None,
-        color: str = None,
-        dimension: str = None,
+        category: Dict[str, str] = None,
+        color: Dict[str, str] = None,
+        dimensions: list[Dict[str, str]] = None,
     ) -> Idea:
         """https://developers.klaxoon.com/reference/v1boardideapost
         Position is a dict with keys 'x' and 'y' and 'z'. 'x' and 'y' are float or int and 'z' is int.
@@ -63,8 +63,8 @@ class KlaxoonIdea(KlaxoonAPI):
             payload["data"]["category"] = category
         if color:
             payload["data"]["color"] = color
-        if dimension:
-            payload["data"]["dimension"] = dimension
+        if dimensions:
+            payload["data"]["dimensions"] = dimensions
         return Idea(**self._request("POST", endpoint, data=payload).json())
 
     def delete_idea_from_board(self, board_id: str, idea_id: str) -> Response:
